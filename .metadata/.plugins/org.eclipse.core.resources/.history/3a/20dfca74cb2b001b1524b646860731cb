@@ -1,0 +1,149 @@
+package com.cenfotec.examen2C.controller;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.cenfotec.examen2C.domain.Categoria;
+import com.cenfotec.examen2C.domain.Tarea;
+import com.cenfotec.examen2C.domain.Workshop;
+import com.cenfotec.examen2C.service.CategoriaService;
+import com.cenfotec.examen2C.service.ClaveService;
+import com.cenfotec.examen2C.service.TareaService;
+import com.cenfotec.examen2C.service.WorkshopService;
+
+@Controller
+public class WorkShopController {
+	@Autowired 
+	WorkshopService workshopService;
+	
+	@Autowired
+	ClaveService claveService;
+	
+	@Autowired
+	TareaService tareaService;
+	
+	@Autowired
+	CategoriaService categoriaService;
+	
+	@RequestMapping("/")
+	public String home(Model model) {
+		return "index";
+	}
+
+    @RequestMapping(value = "/registroWorkshop", method = RequestMethod.GET)
+    public String insertarPage(Model model) {
+        model.addAttribute(new Workshop());
+        model.addAttribute("categoria", categoriaService.getAll());
+        return "registroWorkshop";
+    }
+    
+    @RequestMapping(value = "/registroWorkshop", method = RequestMethod.POST)
+    public String insertarAction(Workshop workshop, BindingResult result, Model model) {
+        workshopService.save(workshop);
+        return "index";
+    }
+	
+    @RequestMapping(value = "/registroCategoria", method = RequestMethod.GET)
+    public String insertarCategorias(Model model) {
+        model.addAttribute(new Categoria());
+        return "registroCategoria";
+    }
+    
+    
+    @RequestMapping(value = "/registroCategoria", method = RequestMethod.POST)
+    public String insertarCategoria(Categoria category, BindingResult result, Model model) {
+        categoriaService.save(category);
+        return "index";
+    }
+    
+    @RequestMapping("/listarCategorias")
+    public String listarCategorias(Model model) {
+        model.addAttribute("categorias", categoriaService.getAll());
+        return "listarCategorias";
+    }
+    
+    @RequestMapping("/listarWorkshop")
+    public String listarWorkshop(Model model) {
+        model.addAttribute("workshop", workshopService.getAll());
+        return "listarWorkshop";
+    }
+    
+	@RequestMapping("/editarCategoria/{id}")
+	public String findCategoriaToEdit(Model model, @PathVariable long id) {
+		Optional<Categoria> possibleData = categoriaService.get(id);
+		if (possibleData.isPresent()) {
+			model.addAttribute("categoriaToEdit",possibleData.get());
+			return "editarCategoria";	
+		}
+		return "notfound";
+	}
+
+	@RequestMapping(value="/editarCategoria/{id}",  method = RequestMethod.POST)
+	public String saveEdition(Categoria categoria, Model model, @PathVariable long id) {
+		categoriaService.save(categoria);
+		return "index";
+	}
+	
+
+	@RequestMapping(value="/eliminarCategoria/{id}",  method = RequestMethod.POST)
+	public String deleteEdition(Model model, @PathVariable long id) {
+		categoriaService.delete(id);
+		return "index";
+	}
+	
+	
+    @RequestMapping(value = "/detalleWork/{id}")
+    public String saveEdition(Model model, @PathVariable long id) {
+        Optional<Workshop> possibleData = workshopService.get(id);
+        if (possibleData.isPresent()) {
+            model.addAttribute("workshopData", possibleData.get());
+            return "detalleWork";
+        }
+        return "notfound";
+    }
+    
+    @RequestMapping(value = "/registrarActividad/{id}")
+    public String recoverForAddActivity(Model model, @PathVariable long id) {
+        Optional<Workshop> workshop = workshopService.get(id);
+        Tarea newActivity = new Tarea();
+        if (workshop.isPresent()) {
+            newActivity.setWorkshop(workshop.get());
+            model.addAttribute("workshop", workshop.get());
+            model.addAttribute("tarea", newActivity);
+            return "registrarActividad";
+        }
+        return "notfound";
+    }
+
+    @RequestMapping(value = "/registrarActividad/{id}", method = RequestMethod.POST)
+    public String saveTarea(Tarea tarea, Model model, @PathVariable long id) {
+        Optional<Workshop> workshop = workshopService.get(id);
+        if (workshop.isPresent()) {
+        	tarea.setWorkshop(workshop.get());
+            tareaService.save(tarea);
+            return "index";
+        }
+        return "errorArticle";
+    }
+    
+    @RequestMapping(value = "/buscarWork", method = RequestMethod.GET)
+    public String buscarPage(Model model) {
+        model.addAttribute(new Workshop());
+        model.addAttribute("categoria", categoriaService.getAll());
+        return "buscarWork";
+    }
+
+    @RequestMapping("/listarNombre")
+    public String listarNombre(Model model, @RequestParam String name) {
+        model.addAttribute("workshopNombre", workshopService.find(name));
+        return "detalleWork";
+    }
+    
+	
+}

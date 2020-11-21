@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="org.apache.poi.xwpf.usermodel.XWPFDocument"/>
+    <fullyQualifiedTypeName name="org.apache.poi.xwpf.usermodel.XWPFParagraph"/>
+    <fullyQualifiedTypeName name="org.apache.poi.xwpf.usermodel.ParagraphAlignment"/>
+    <fullyQualifiedTypeName name="org.apache.poi.xwpf.usermodel.XWPFRun"/>
+    <fullyQualifiedTypeName name="org.apache.poi.xwpf.usermodel.UnderlinePatterns"/>
+    <fullyQualifiedTypeName name="java.io.FileOutputStream"/>
+    <fullyQualifiedTypeName name="java.io.IOException"/>
+</qualifiedTypeNameHistroy>
